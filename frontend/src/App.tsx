@@ -39,6 +39,10 @@ function ReviewForm({ initialRating = 5, initialComment = "", submitLabel, onSub
     setSaving(true);
     try {
       await onSubmit(rating, comment.trim());
+      if (!onCancel) {
+        setRating(5);
+        setComment("");
+      }
     } finally {
       setSaving(false);
     }
