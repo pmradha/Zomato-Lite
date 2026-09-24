@@ -9,8 +9,10 @@ RESTAURANT_ID = 1
 
 
 def refresh_average_rating(session: Session, restaurant: Restaurant) -> None:
-    average = session.scalar(select(func.avg(Review.rating)).where(Review.restaurant_id == restaurant.id))
-    restaurant.average_rating = Decimal(str(average)).quantize(Decimal("0.01")) if average is not None else None
+    average = session.scalar(
+        select(func.avg(Review.rating)).where(Review.restaurant_id == restaurant.restaurant_id)
+    )
+    restaurant.average_rating = Decimal(str(average)).quantize(Decimal("0.1")) if average is not None else None
 
 
 def get_restaurant(session: Session) -> Restaurant:

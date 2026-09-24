@@ -68,7 +68,7 @@ function ReviewForm({ initialRating = 5, initialComment = "", submitLabel, onSub
 export function App() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [rating, setRating] = useState<Rating | null>(null);
-  const [editing, setEditing] = useState<string | null>(null);
+  const [editing, setEditing] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -92,13 +92,13 @@ export function App() {
     await load();
   }
 
-  async function updateReview(id: string, reviewRating: number, comment: string) {
+  async function updateReview(id: number, reviewRating: number, comment: string) {
     await api.updateReview(id, reviewRating, comment);
     setEditing(null);
     await load();
   }
 
-  async function deleteReview(id: string) {
+  async function deleteReview(id: number) {
     await api.deleteReview(id);
     await load();
   }
@@ -128,9 +128,9 @@ export function App() {
           <div className="review-list">
             {reviews.map((review) => (
               <article className="review" key={review.review_id}>
-                {editing === review.review_id ? <ReviewForm initialRating={review.rating} initialComment={review.comment} submitLabel="Save changes" onSubmit={(newRating, comment) => updateReview(review.review_id, newRating, comment)} onCancel={() => setEditing(null)} /> : <>
+                {editing === review.review_id ? <ReviewForm initialRating={review.rating} initialComment={review.review_text} submitLabel="Save changes" onSubmit={(newRating, comment) => updateReview(review.review_id, newRating, comment)} onCancel={() => setEditing(null)} /> : <>
                   <div className="review-meta"><Stars value={review.rating} /><time>{new Date(review.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}</time></div>
-                  <p>{review.comment}</p>
+                  <p>{review.review_text}</p>
                   <div className="review-actions"><button type="button" onClick={() => setEditing(review.review_id)}><Pencil size={14} /> Edit</button><button type="button" onClick={() => void deleteReview(review.review_id)}><Trash2 size={14} /> Delete</button></div>
                 </>}
               </article>

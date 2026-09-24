@@ -22,11 +22,11 @@ def initialize_database() -> None:
         if session.get(Restaurant, 1) is None:
             session.add(
                 Restaurant(
-                    id=1,
+                    restaurant_id=1,
                     name="Ludhiana Burrito",
                     location="Sector 32",
                     restaurant_type="Dine-in",
-                    cuisine="Indian",
+                    cuisine_type="Indian",
                     average_rating=None,
                 )
             )

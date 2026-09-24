@@ -11,6 +11,8 @@ A V1 anonymous restaurant review app for Ludhiana Burrito in Sector 32.
 - Database access: SQLAlchemy
 - Database: Neon PostgreSQL
 
+The existing Neon `restaurant` and `review` tables are authoritative. The SQLAlchemy models and [migration](backend/migrations/001_initial.sql) mirror that schema; the application does not create or replace tables at startup.
+
 ## Run the backend
 
 ```bash

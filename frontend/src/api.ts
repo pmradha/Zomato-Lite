@@ -1,7 +1,7 @@
 export type Review = {
-  review_id: string;
+  review_id: number;
   rating: number;
-  comment: string;
+  review_text: string;
   created_at: string;
 };
 
@@ -32,13 +32,13 @@ export const api = {
   createReview: (rating: number, comment: string) =>
     request<Review>("/reviews", {
       method: "POST",
-      body: JSON.stringify({ rating, comment }),
+      body: JSON.stringify({ rating, review_text: comment }),
     }),
-  updateReview: (id: string, rating: number, comment: string) =>
+  updateReview: (id: number, rating: number, comment: string) =>
     request<Review>(`/reviews/${id}`, {
       method: "PATCH",
-      body: JSON.stringify({ rating, comment }),
+      body: JSON.stringify({ rating, review_text: comment }),
     }),
-  deleteReview: (id: string) =>
+  deleteReview: (id: number) =>
     request<void>(`/reviews/${id}`, { method: "DELETE" }),
 };

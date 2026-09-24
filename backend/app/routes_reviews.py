@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -14,9 +12,9 @@ router = APIRouter(prefix="/reviews", tags=["reviews"])
 
 def to_response(review: Review) -> ReviewResponse:
     return ReviewResponse(
-        review_id=review.id,
+        review_id=review.review_id,
         rating=review.rating,
-        comment=review.comment,
+        review_text=review.review_text,
         created_at=review.created_at,
     )
 
@@ -24,7 +22,7 @@ def to_response(review: Review) -> ReviewResponse:
 @router.post("", response_model=ReviewResponse, status_code=status.HTTP_201_CREATED)
 def create_review(payload: ReviewCreate, db: Session = Depends(get_db)) -> ReviewResponse:
     restaurant = get_restaurant(db)
-    review = Review(restaurant_id=restaurant.id, rating=payload.rating, comment=payload.comment)
+    review = Review(restaurant_id=restaurant.restaurant_id, rating=payload.rating, review_text=payload.review_text)
     db.add(review)
     db.flush()
     refresh_average_rating(db, restaurant)
@@ -37,13 +35,13 @@ def create_review(payload: ReviewCreate, db: Session = Depends(get_db)) -> Revie
 def list_reviews(db: Session = Depends(get_db)) -> list[ReviewResponse]:
     restaurant = get_restaurant(db)
     reviews = db.scalars(
-        select(Review).where(Review.restaurant_id == restaurant.id).order_by(Review.created_at.desc())
+        select(Review).where(Review.restaurant_id == restaurant.restaurant_id).order_by(Review.created_at.desc())
     ).all()
     return [to_response(review) for review in reviews]
 
 
 @router.patch("/{review_id}", response_model=ReviewResponse)
-def update_review(review_id: UUID, payload: ReviewUpdate, db: Session = Depends(get_db)) -> ReviewResponse:
+def update_review(review_id: int, payload: ReviewUpdate, db: Session = Depends(get_db)) -> ReviewResponse:
     review = db.get(Review, review_id)
     if review is None:
         raise HTTPException(status_code=404, detail="Review not found")
@@ -61,7 +59,7 @@ def update_review(review_id: UUID, payload: ReviewUpdate, db: Session = Depends(
 
 
 @router.delete("/{review_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_review(review_id: UUID, db: Session = Depends(get_db)) -> Response:
+def delete_review(review_id: int, db: Session = Depends(get_db)) -> Response:
     review = db.get(Review, review_id)
     if review is None:
         raise HTTPException(status_code=404, detail="Review not found")

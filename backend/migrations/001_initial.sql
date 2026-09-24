@@ -1,19 +1,22 @@
-CREATE TABLE restaurants (
-    id INTEGER PRIMARY KEY,
-    name VARCHAR(120) NOT NULL,
-    location VARCHAR(120) NOT NULL,
-    restaurant_type VARCHAR(40) NOT NULL,
-    cuisine VARCHAR(80) NOT NULL,
-    average_rating NUMERIC(3, 2)
+-- This migration documents the authoritative V1 schema used by Neon.
+-- It is non-destructive and does not alter an existing matching schema.
+CREATE TABLE IF NOT EXISTS restaurant (
+    restaurant_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    restaurant_type VARCHAR(100) NOT NULL,
+    cuisine_type VARCHAR(100) NOT NULL,
+    average_rating NUMERIC(2, 1)
 );
 
-CREATE TABLE reviews (
-    id UUID PRIMARY KEY,
-    restaurant_id INTEGER NOT NULL REFERENCES restaurants(id),
+CREATE TABLE IF NOT EXISTS review (
+    review_id SERIAL PRIMARY KEY,
+    restaurant_id INT NOT NULL REFERENCES restaurant(restaurant_id),
     rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
-    comment TEXT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    review_text TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO restaurants (id, name, location, restaurant_type, cuisine, average_rating)
-VALUES (1, 'Ludhiana Burrito', 'Sector 32', 'Dine-in', 'Indian', NULL);
+INSERT INTO restaurant (restaurant_id, name, location, restaurant_type, cuisine_type, average_rating)
+VALUES (1, 'Ludhiana Burrito', 'Sector 32', 'Dine-in', 'Indian', NULL)
+ON CONFLICT (restaurant_id) DO NOTHING;
