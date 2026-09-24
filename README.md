@@ -21,6 +21,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 export DATABASE_URL='your Neon connection string'
+export FRONTEND_ORIGIN='http://localhost:5173'
 uvicorn app.main:app --reload
 ```
 
@@ -34,4 +35,8 @@ npm install
 npm run dev
 ```
 
-The frontend expects the API at `http://localhost:8000`. Set `VITE_API_URL` to override it.
+The frontend uses the Vite `/api` proxy locally. For a deployed frontend, set the public `VITE_API_URL` environment variable to the deployed backend URL. Configure the backend's `FRONTEND_ORIGIN` to the deployed frontend origin. Never expose `DATABASE_URL` to the frontend.
+
+## Vercel deployment
+
+Deploy `frontend/` as a Vite project with `npm run build` and output directory `dist`. Deploy `backend/` as a separate Vercel project; `backend/api/index.py` exposes the FastAPI application as the serverless entrypoint. Set `DATABASE_URL` and `FRONTEND_ORIGIN` only in the backend project, and set `VITE_API_URL` only in the frontend project.

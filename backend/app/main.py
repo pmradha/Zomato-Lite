@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -8,9 +10,11 @@ from .routes_reviews import router as reviews_router
 
 app = FastAPI(title="Zomato-Lite API")
 
+frontend_origin = os.getenv("FRONTEND_ORIGIN", "http://localhost:5173")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[frontend_origin],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
